@@ -1,6 +1,5 @@
 import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import 'chatmessage.dart';
@@ -24,8 +23,9 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     chatGPT = OpenAI.instance.build(
-        token: "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",
+        token: "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",
         baseOption: HttpSetup(receiveTimeout: 60000));
+
     super.initState();
   }
 
@@ -35,8 +35,6 @@ class _ChatScreenState extends State<ChatScreen> {
     chatGPT?.genImgClose();
     super.dispose();
   }
-
-  // Link for api - https://beta.openai.com/account/api-keys
 
   void _sendMessage() async {
     if (_controller.text.isEmpty) return;
@@ -54,14 +52,14 @@ class _ChatScreenState extends State<ChatScreen> {
     _controller.clear();
 
     if (_isImageSearch) {
-      final request = GenerateImage(message.text, 1, size: "256x256");
+      final request = GenerateImage(message.text, 1, size: "512x512");
 
       final response = await chatGPT!.generateImage(request);
       Vx.log(response!.data!.last!.url!);
       insertNewData(response.data!.last!.url!, isImage: true);
     } else {
-      final request =
-          CompleteText(prompt: message.text, model: kTranslateModelV3);
+      final request = CompleteText(
+          prompt: message.text, model: kTranslateModelV3, maxTokens: 1024);
 
       final response = await chatGPT!.onCompleteText(request: request);
       Vx.log(response!.choices[0].text);
@@ -89,8 +87,7 @@ class _ChatScreenState extends State<ChatScreen> {
           child: TextField(
             controller: _controller,
             onSubmitted: (value) => _sendMessage(),
-            decoration: const InputDecoration.collapsed(
-                hintText: "Question/description"),
+            decoration: const InputDecoration.collapsed(hintText: "Question"),
           ),
         ),
         ButtonBar(
@@ -117,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text("ChatGPT & Dall-E2 Demo")),
+        appBar: AppBar(title: const Text("ChatBot & Image Generator")),
         body: SafeArea(
           child: Column(
             children: [

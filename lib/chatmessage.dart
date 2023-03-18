@@ -22,7 +22,9 @@ class ChatMessage extends StatelessWidget {
             .subtitle1(context)
             .make()
             .box
-            .color(sender == "user" ? Vx.red200 : Vx.green200)
+            .color(sender == "user"
+                ? Color.fromARGB(255, 255, 107, 107)
+                : Color.fromARGB(255, 8, 255, 94))
             .p16
             .rounded
             .alignCenter
